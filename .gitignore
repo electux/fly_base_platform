@@ -1,0 +1,15 @@
+# Yocto build directories
+build-*/
+
+# Caching and downloads directories (if placed inside the workspace)
+downloads/
+sstate-cache/
+tmp/
+
+# Editor / IDE local configs
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db

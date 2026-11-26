@@ -1,0 +1,174 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Device Tree Source for Mellow Fly-Pi-lite2.1 (Fly H3)
+ * SoC: Allwinner H3 (sun8i), 512MB DDR3, onboard RTL8189FTV 2.4GHz Wi-Fi
+ */
+
+/dts-v1/;
+#include "sun8i-h3.dtsi"
+#include "sunxi-common-regulators.dtsi"
+
+#include <dt-bindings/gpio/gpio.h>
+
+/ {
+	model = "Mellow Fly-Pi-lite2.1 (Fly H3)";
+	compatible = "mellow,fly-h3", "allwinner,sun8i-h3";
+
+	aliases {
+		serial0 = &uart0;
+		ethernet0 = &rtl8189ftv;
+		mmc0 = &mmc0;
+	};
+
+	chosen {
+		stdout-path = "serial0:115200n8";
+	};
+
+	connector {
+		compatible = "hdmi-connector";
+		type = "a";
+
+		port {
+			hdmi_con_in: endpoint {
+				remote-endpoint = <&hdmi_out_con>;
+			};
+		};
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		led-status {
+			label = "fly:blue:status";
+			gpios = <&pio 6 12 GPIO_ACTIVE_HIGH>; /* PG12 */
+			linux,default-trigger = "heartbeat";
+		};
+
+		led-pwr {
+			label = "fly:green:pwr";
+			gpios = <&pio 6 13 GPIO_ACTIVE_HIGH>; /* PG13 */
+			default-state = "on";
+		};
+
+		led-wifi {
+			label = "fly:green:wifi";
+			gpios = <&pio 6 11 GPIO_ACTIVE_HIGH>; /* PG11 */
+			linux,default-trigger = "mmc1";
+		};
+
+		led-backlight {
+			label = "fly:backlight";
+			gpios = <&pio 0 6 GPIO_ACTIVE_HIGH>; /* PA6 */
+			linux,default-trigger = "default-on";
+			default-state = "on";
+		};
+	};
+
+	reg_vdd_cpux: vdd-cpux-regulator {
+		compatible = "regulator-gpio";
+		regulator-name = "vdd-cpux";
+		regulator-min-microvolt = <1100000>;
+		regulator-max-microvolt = <1300000>;
+		regulator-always-on;
+		regulator-boot-on;
+		regulator-ramp-delay = <50>;
+		enable-active-high;
+		gpios = <&pio 0 9 GPIO_ACTIVE_HIGH>; /* PA9 */
+		states = <1100000 0x0>, <1300000 0x1>;
+	};
+
+	reg_vcc_dram: vcc-dram {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc-dram";
+		regulator-min-microvolt = <1500000>;
+		regulator-max-microvolt = <1500000>;
+		regulator-always-on;
+		regulator-boot-on;
+		enable-active-high;
+		gpio = <&pio 0 17 GPIO_ACTIVE_HIGH>; /* PA17 */
+		vin-supply = <&reg_vcc5v0>;
+	};
+};
+
+&cpu0 {
+	cpu-supply = <&reg_vdd_cpux>;
+};
+
+&de {
+	status = "okay";
+};
+
+&ehci0 {
+	status = "okay";
+};
+
+&ehci1 {
+	status = "okay";
+};
+
+&ehci2 {
+	status = "okay";
+};
+
+&ehci3 {
+	status = "okay";
+};
+
+&hdmi {
+	status = "okay";
+};
+
+&hdmi_out {
+	hdmi_out_con: endpoint {
+		remote-endpoint = <&hdmi_con_in>;
+	};
+};
+
+&mmc0 {
+	vmmc-supply = <&reg_vcc3v3>;
+	bus-width = <4>;
+	broken-cd;
+	status = "okay";
+};
+
+&mmc1 {
+	vmmc-supply = <&reg_vcc3v3>;
+	bus-width = <4>;
+	non-removable;
+	status = "okay";
+
+	rtl8189ftv: sdio_wifi@1 {
+		reg = <1>;
+	};
+};
+
+&ohci0 {
+	status = "okay";
+};
+
+&ohci1 {
+	status = "okay";
+};
+
+&ohci2 {
+	status = "okay";
+};
+
+&ohci3 {
+	status = "okay";
+};
+
+&uart0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart0_pa_pins>;
+	status = "okay";
+};
+
+&usb_otg {
+	dr_mode = "host";
+	status = "okay";
+};
+
+&usbphy {
+	status = "okay";
+};
